@@ -1,7 +1,11 @@
 ﻿@page "/armala"
 @using PizzaBlazor.Shared.Models
 
-<h3>Armala tu mismo</h3>
+<figure class="text-center">
+  <figcaption class="blockquote-footer h2">
+    En donde tu. <cite title="Source Title">mismo la puedes armar</cite>
+  </figcaption>
+</figure>
 
 <div class="row">
     <div class="col-6">
@@ -32,15 +36,14 @@
             @foreach (var item in ingredientes)
            {
                <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <input class="form-check-input" type="checkbox" id="flexCheckDefault" @onchange="eventArgs => {IngSel(item, eventArgs);}">
                 <label class="form-check-label" for="flexCheckDefault">
                     @item.Nombre
                 </label>
-            </div>
+               </div>
            } 
         }
-
-     </div>
+    </div>
 
     <div class="col-6">
         @tamanoSeleccionado.Tamano
@@ -48,6 +51,12 @@
         <br/>
         @tipoMasaSeleccionado.Tipo
         @tipoMasaSeleccionado.Precio
+        <br/>
+        Ingrediente 
+        @CostoIngrediente
+        <br/>
+        Total
+        @totalPizza
     </div>
 </div>
 
@@ -58,10 +67,15 @@
     List<TipoMasa> tipoMasa = new List<TipoMasa>();
     List<Ingrediente> ingredientes = new List<Ingrediente>();
 
+    List<Ingrediente> ingredientesSel = new List<Ingrediente>();
+
     Tamanos tamanoSeleccionado = new Tamanos();
     TipoMasa tipoMasaSeleccionado = new TipoMasa();
     Ingrediente ingredienteSeleccionado = new Ingrediente();
-    
+
+    float CostoIngrediente = 0.0f;
+    float totalPizza = 0.0f;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,7 +95,7 @@
             new TipoMasa{Id = 4, Tipo = "Sarten", Precio = 35.0f},
         };
 
-         ingredientes = new List<Ingrediente>()
+        ingredientes = new List<Ingrediente>()
         {
             new Ingrediente{Id = 1, Nombre = "Jamon", Precio = 10.0f},
             new Ingrediente{Id = 2, Nombre = "Piña", Precio = 18.0f},
@@ -98,6 +112,7 @@
         int idint = int.Parse(id);
 
         tamanoSeleccionado = tamanos.Where(tamano => tamano.Id == idint).FirstOrDefault();
+        totalPizza = tamanoSeleccionado.Precio + tipoMasaSeleccionado.Precio + CostoIngrediente;
     }
 
     private void TipoFunc(ChangeEventArgs args)
@@ -107,6 +122,7 @@
         int idint = int.Parse(id);
 
         tipoMasaSeleccionado = tipoMasa.Where(tipoMasa => tipoMasa.Id == idint).FirstOrDefault();
+        totalPizza = tamanoSeleccionado.Precio + tipoMasaSeleccionado.Precio + CostoIngrediente;
     }
 
     private void IngredienteFunc(ChangeEventArgs args)
@@ -116,7 +132,26 @@
         int idint = int.Parse(id);
 
         ingredienteSeleccionado = ingredientes.Where(ingredientes => ingredientes.Id == idint).FirstOrDefault();
+        
     }
-    
 
+    private void IngSel(Ingrediente ingrediente, ChangeEventArgs args)
+    {
+        bool prueba = bool.Parse(args.Value.ToString());
+        //var ingredientesSel = ingrediente;
+
+        if (prueba)
+        {
+            ingredientesSel.Add(ingrediente);
+        }
+        else
+        {
+            ingredientesSel.Remove(ingrediente);
+        }
+        foreach (var item in ingredientesSel)
+        {
+            CostoIngrediente += item.Precio;
+        }
+        totalPizza = tamanoSeleccionado.Precio + tipoMasaSeleccionado.Precio + CostoIngrediente;
+    }
 }
