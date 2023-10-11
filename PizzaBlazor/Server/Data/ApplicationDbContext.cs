@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PizzaBlazor.Shared.Models;
 
 namespace PizzaBlazor.Server.Data
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext:IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions options):base(options)
         {
@@ -16,5 +17,6 @@ namespace PizzaBlazor.Server.Data
 
         public DbSet<Ingrediente> Ingredientes { get; set; }
         public DbSet<Tamanos> Tamanos { get; set; }
+        public DbSet<TipoMasa> Masas { get; set; }
     }
 }
